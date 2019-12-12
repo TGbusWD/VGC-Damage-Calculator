@@ -63,7 +63,7 @@ function GET_DAMAGE_SM(attacker, defender, move, field) {
         else move.type = tempMove.type;
         move.isCrit = tempMove.isCrit;
         move.hits = 1;
-        moveDescName = ZMOVES_LOOKUP[move.type] + " (" + move.bp + " BP)";
+        moveDescName = translate_move(ZMOVES_LOOKUP[move.type]) + " (" + move.bp + " 伤害)";
         if(field.isProtect){
             isQuarteredByProtect = true;
         }
@@ -756,29 +756,29 @@ function buildDescription(description) {
         output += description.attackBoost + " ";
     }
     output = appendIfSet(output, description.attackEVs);
-    output = appendIfSet(output, description.attackerItem);
-    output = appendIfSet(output, description.attackerAbility);
+    output = appendIfSet(output, description.attackerItem, translate_item);
+    output = appendIfSet(output, description.attackerAbility, translate_ability);
 
     if (description.isBurned) {
-        output += "burned ";
+        output += "烧伤 ";
     }
-    output += description.attackerName + " ";
+    output += translate_pokemon(description.attackerName) + " ";
     if (description.isHelpingHand) {
-        output += "Helping Hand ";
+        output += "(帮助) ";
     }
     if (description.isBattery) {
-        output += "Battery ";
+        output += "(蓄电池) ";
     }
-    output += description.moveName + " ";
+    output += translate_move(description.moveName) + " ";
     if (description.moveBP && description.moveType) {
-        output += "(" + description.moveBP + " BP " + description.moveType + ") ";
+        output += "(" + description.moveBP + " 威力/ " + translate_type(description.moveType) + ") ";
     } else if (description.moveBP) {
-        output += "(" + description.moveBP + " BP) ";
+        output += "(" + description.moveBP + " 威力) ";
     } else if (description.moveType) {
         output += "(" + description.moveType + ") ";
     }
     if (description.hits) {
-        output += "(" + description.hits + " hits) ";
+        output += "(" + description.hits + " 次命中) ";
     }
     output += "vs. ";
     if (description.defenseBoost) {
@@ -791,27 +791,27 @@ function buildDescription(description) {
     if (description.defenseEVs) {
         output += " / " + description.defenseEVs + " ";
     }
-    output = appendIfSet(output, description.defenderItem);
-    output = appendIfSet(output, description.defenderAbility);
-    output += description.defenderName;
+    output = appendIfSet(output, description.defenderItem, translate_item);
+    output = appendIfSet(output, description.defenderAbility, translate_ability);
+    output += translate_pokemon(description.defenderName);
     if (description.weather) {
-        output += " in " + description.weather;
+        output += " (" + translate_field(description.weather) + ")";
     } else if (description.terrain) {
-        output += " in " + description.terrain + " Terrain";
+        output += " (" + translate_field(description.terrain) + ")";
     }
     if (description.isReflect) {
-        output += " through Reflect";
+        output += " (反射壁)";
     } else if (description.isLightScreen) {
-        output += " through Light Screen";
+        output += " (光墙)";
     }
     if (description.isCritical) {
-        output += " on a critical hit";
+        output += " (击中要害)";
     }
     if (description.isFriendGuard) {
-        output += " with Friend Guard";
+        output += " (友情防守)";
     }
     if(description.isQuarteredByProtect) {
-        output += " through Protect";
+        output += " (守住)";
     }
 
     return output;
@@ -825,11 +825,11 @@ function appendIfSet(str, toAppend) {
 }
 
 function toSmogonStat(stat) {
-    return stat === AT ? "Atk"
-            : stat === DF ? "Def"
-            : stat === SA ? "SpA"
-            : stat === SD ? "SpD"
-            : stat === SP ? "Spe"
+    return stat === AT ? "攻击"
+            : stat === DF ? "防御"
+            : stat === SA ? "特攻"
+            : stat === SD ? "特防"
+            : stat === SP ? "速度"
             : "wtf";
 }
 

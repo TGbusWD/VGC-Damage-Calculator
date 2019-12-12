@@ -422,7 +422,7 @@ function showFormes(formeObj, setName, pokemonName, pokemon) {
         }
     }
 
-    var formeOptions = getSelectOptions(pokemon.formes, false, defaultForme);
+    var formeOptions = getSelectOptions(pokemon.formes, false, defaultForme, translate_pokemon);
     formeObj.children("select").find("option").remove().end().append(formeOptions).change();
     formeObj.show();
 }
@@ -537,7 +537,7 @@ function calculate() {
         minPercent = Math.floor(minDamage * 1000 / p2.maxHP) / 10;
         maxPercent = Math.floor(maxDamage * 1000 / p2.maxHP) / 10;
         result.damageText = minDamage + "-" + maxDamage + " (" + minPercent + " - " + maxPercent + "%)";
-          result.koChanceText = p1.moves[i].bp === 0 ? '<a href="https://www.youtube.com/watch?v=7u6kMjWt1Rk&feature=youtu.be">you wanna dance with me?!</a>'
+          result.koChanceText = p1.moves[i].bp === 0 ? '<a href="https://bangumi.bilibili.com/anime/5761/play#97555">皮卡丘！加油！(避雷针？不存在的)</a>'
                   : getKOChanceText(result.damage, p1.moves[i], p2, field.getSide(1), p1.ability === 'Bad Dreams');
         if(p1.moves[i].isMLG){
             result.koChanceText = "<a href = 'https://www.youtube.com/watch?v=iD92h-M474g'>it's a one-hit KO!</a>"; //dank memes
@@ -574,8 +574,8 @@ function calculate() {
     }
     bestResult.prop("checked", true);
     bestResult.change();
-    $("#resultHeaderL").text(p1.name + "'s Moves (select one to show detailed results)");
-    $("#resultHeaderR").text(p2.name + "'s Moves (select one to show detailed results)");
+    $("#resultHeaderL").text(translate_pokemon(p1.name) + "的招式 (选择以查看详细结果)");
+    $("#resultHeaderR").text(translate_pokemon(p2.name) + "的招式 (选择以查看详细结果)");
 }
 
 $(".result-move").change(function() {
@@ -911,7 +911,7 @@ function getSetOptions() {
         var pokeName = pokeNames[i];
         setOptions.push({
             pokemon: pokeName,
-            text: pokeName
+            text: translate_pokemon(pokeName)
         });
         if (pokeName in setdex) {
             var setNames = Object.keys(setdex[pokeName]);
@@ -920,7 +920,7 @@ function getSetOptions() {
                 setOptions.push({
                     pokemon: pokeName,
                     set: setName,
-                    text: pokeName + " (" + setName + ")",
+                    text: translate_pokemon(pokeName) + " (" + setName + ")",
                     id: pokeName + " (" + setName + ")"
                 });
             }
@@ -928,7 +928,7 @@ function getSetOptions() {
         setOptions.push({
             pokemon: pokeName,
             set: "Blank Set",
-            text: pokeName + " (Blank Set)",
+            text: translate_pokemon(pokeName) + " (Blank Set)",
             id: pokeName + " (Blank Set)"
         });
     }

@@ -1,24 +1,24 @@
 function getKOChanceText(damage, move, defender, field, isBadDreams) {
     if (isNaN(damage[0])) {
-       return 'something broke; please tell squirrelboy1225';
+       return '出错了';
     }
     if (damage[damage.length-1] === 0) {
         if (field.weather === "Harsh Sun" && move.type === "Water") {
-            return 'the Water-Type attack evaporated in the harsh sunlight';
+            return '水属性攻击因日光非常猛烈而蒸发';
         } else if (field.weather === "Heavy Rain" && move.type === "Fire") {
-            return 'the Fire-Type attack fizzled out in the heavy rain';
+            return '火属性攻击因下大雨而熄灭';
         }
-        return 'aim for the horn next time';
+        return '<a href="https://bangumi.bilibili.com/anime/5761/play#97555">皮卡丘！加油！(避雷针？不存在的)</a>';
     }
     var hasSitrus = defender.item === 'Sitrus Berry';
     var hasFigy = defender.item === 'Figy Berry';
     var gluttony = defender.ability === "Gluttony";
     if ((damage.length !== 256 || (!hasSitrus && !hasFigy)) && damage[0] >= defender.curHP) {
-        return 'guaranteed OHKO';
+        return '确定一击击杀';
     } else if (damage.length === 256 && hasSitrus && damage[0] >= defender.curHP + Math.floor(defender.maxHP / 4)) {
-        return 'guaranteed OHKO';
+        return '确定一击击杀';
     } else if (damage.length === 256 && hasFigy && damage[0] >= defender.curHP + Math.floor(defender.maxHP / 3)) {
-        return 'guaranteed OHKO';
+        return '确定一击击杀';
     }
 
     var hazards = 0;
@@ -26,23 +26,23 @@ function getKOChanceText(damage, move, defender, field, isBadDreams) {
     if (field.isSR && defender.ability !== 'Magic Guard') {
         var effectiveness = typeChart['Rock'][defender.type1] * (defender.type2 ? typeChart['Rock'][defender.type2] : 1);
         hazards += Math.floor(effectiveness * defender.maxHP / 8);
-        hazardText.push('Stealth Rock');
+        hazardText.push('隐形岩');
     }
     if ([defender.type1, defender.type2].indexOf('Flying') === -1 &&
             ['Magic Guard', 'Levitate'].indexOf(defender.ability) === -1 && defender.item !== 'Air Balloon') {
         if (field.spikes === 1) {
             hazards += Math.floor(defender.maxHP / 8);
             if (gen === 2) {
-                hazardText.push('Spikes');
+                hazardText.push('撒菱');
             } else {
-                hazardText.push('1 layer of Spikes');
+                hazardText.push('1层撒菱');
             }
         } else if (field.spikes === 2) {
             hazards += Math.floor(defender.maxHP / 6);
-            hazardText.push('2 layers of Spikes');
+            hazardText.push('2层撒菱');
         } else if (field.spikes === 3) {
             hazards += Math.floor(defender.maxHP / 4);
-            hazardText.push('3 layers of Spikes');
+            hazardText.push('3层撒菱');
         }
     }
     if (isNaN(hazards)) {
@@ -54,15 +54,15 @@ function getKOChanceText(damage, move, defender, field, isBadDreams) {
     if (field.weather === 'Sun') {
         if (defender.ability === 'Dry Skin' || defender.ability === 'Solar Power') {
             eot -= Math.floor(defender.maxHP / 8);
-            eotText.push(defender.ability + ' damage');
+            eotText.push(translate_ability(defender.ability) + ' 伤害');
         }
     } else if (field.weather === 'Rain') {
         if (defender.ability === 'Dry Skin') {
             eot += Math.floor(defender.maxHP / 8);
-            eotText.push('Dry Skin recovery');
+            eotText.push('干燥皮肤回复');
         } else if (defender.ability === 'Rain Dish') {
             eot += Math.floor(defender.maxHP / 16);
-            eotText.push('Rain Dish recovery');
+            eotText.push('雨盘回复');
         }
     } else if (field.weather === 'Sand') {
         if (['Rock', 'Ground', 'Steel'].indexOf(defender.type1) === -1 &&
@@ -70,114 +70,114 @@ function getKOChanceText(damage, move, defender, field, isBadDreams) {
                 ['Magic Guard', 'Overcoat', 'Sand Force', 'Sand Rush', 'Sand Veil'].indexOf(defender.ability) === -1 &&
                 defender.item !== 'Safety Goggles') {
             eot -= Math.floor(defender.maxHP / 16);
-            eotText.push('sandstorm damage');
+            eotText.push('沙暴伤害');
         }
     } else if (field.weather === 'Hail') {
         if (defender.ability === 'Ice Body') {
             eot += Math.floor(defender.maxHP / 16);
-            eotText.push('Ice Body recovery');
+            eotText.push('冰冻之躯回复');
         } else if (defender.type1 !== 'Ice' && defender.type2 !== 'Ice' &&
                 ['Magic Guard', 'Overcoat', 'Snow Cloak'].indexOf(defender.ability) === -1 &&
                 defender.item !== 'Safety Goggles') {
             eot -= Math.floor(defender.maxHP / 16);
-            eotText.push('hail damage');
+            eotText.push('冰雹伤害');
         }
     }
     if (defender.item === 'Leftovers') {
         eot += Math.floor(defender.maxHP / 16);
-        eotText.push('Leftovers recovery');
+        eotText.push('吃剩的东西回复');
     } else if (defender.item === 'Black Sludge') {
         if (defender.type1 === 'Poison' || defender.type2 === 'Poison') {
             eot += Math.floor(defender.maxHP / 16);
-            eotText.push('Black Sludge recovery');
+            eotText.push('黑色污泥回复');
         } else if (defender.ability !== 'Magic Guard' && defender.ability !== 'Klutz') {
             eot -= Math.floor(defender.maxHP / 8);
-            eotText.push('Black Sludge damage');
+            eotText.push('黑色污泥伤害');
         }
     }
     if (field.terrain === "Grassy") {
         if (field.isGravity || (defender.type1 !== "Flying" && defender.type2 !== "Flying" &&
                 defender.item !== "Air Balloon" && defender.ability !== "Levitate")) {
             eot += Math.floor(defender.maxHP / 16);
-            eotText.push('Grassy Terrain recovery');
+            eotText.push('青草场地回复');
         }
     }
     var toxicCounter = 0;
     if (defender.status === 'Poisoned') {
         if (defender.ability === 'Poison Heal') {
             eot += Math.floor(defender.maxHP / 8);
-            eotText.push('Poison Heal');
+            eotText.push('毒疗');
         } else if (defender.ability !== 'Magic Guard') {
             eot -= Math.floor(defender.maxHP / 8);
-            eotText.push('poison damage');
+            eotText.push('中毒伤害');
         }
     } else if (defender.status === 'Badly Poisoned') {
         if (defender.ability === 'Poison Heal') {
             eot += Math.floor(defender.maxHP / 8);
-            eotText.push('Poison Heal');
+            eotText.push('毒疗');
         } else if (defender.ability !== 'Magic Guard') {
-            eotText.push('toxic damage');
+            eotText.push('中毒伤害');
             toxicCounter = defender.toxicCounter;
         }
     } else if (defender.status === 'Burned') {
         if (defender.ability === 'Heatproof') {
             eot -= Math.floor(defender.maxHP / 16);
-            eotText.push('reduced burn damage');
+            eotText.push('减少的烧伤伤害');
         } else if (defender.ability !== 'Magic Guard') {
             eot -= Math.floor(defender.maxHP / 8);
-            eotText.push('burn damage');
+            eotText.push('烧伤伤害');
         }
     } else if (defender.status === 'Asleep' && isBadDreams && defender.ability !== 'Magic Guard') {
         eot -= Math.floor(defender.maxHP / 8);
-        eotText.push('Bad Dreams');
+        eotText.push('梦魇');
     }
 
     // multi-hit moves have too many possibilities for brute-forcing to work, so reduce it to an approximate distribution
     var qualifier = '';
     if (move.hits > 1) {
-        qualifier = 'approx. ';
+        qualifier = '约. ';
         damage = squashMultihit(damage, move.hits);
     }
 
     var multihit = damage.length === 256 || move.hits > 1;
     var c = getKOChance(damage, multihit, defender.curHP - hazards, 0, 1, defender.maxHP, toxicCounter, hasSitrus, hasFigy, gluttony);
-    var afterText = hazardText.length > 0 ? ' after ' + serializeText(hazardText) : '';
+    var afterText = hazardText.length > 0 ? ' (在' + serializeText(hazardText) + '后)' : '';
     if (c === 1) {
-        return 'guaranteed OHKO' + afterText;
+        return '确定一击击杀' + afterText;
     } else if (c > 0) {
-        return qualifier + Math.round(c * 1000) / 10 + '% chance to OHKO' + afterText;
+        return qualifier + Math.round(c * 1000) / 10 + '% 几率一击击杀' + afterText;
     }
 
     if (hasSitrus && move.name !== 'Knock Off') {
-        eotText.push('Sitrus Berry recovery');
+        eotText.push('文柚果回复');
     }
 
     if (hasFigy && move.name !== 'Knock Off') {
-        if(gluttony) eotText.push('Gluttony Figy Berry recovery');
-        else eotText.push('Figy Berry recovery');
+        if(gluttony) eotText.push('贪吃鬼树果回复');
+        else eotText.push('树果回复');
     }
-    afterText = hazardText.length > 0 || eotText.length > 0 ? ' after ' + serializeText(hazardText.concat(eotText)) : '';
+    afterText = hazardText.length > 0 || eotText.length > 0 ? ' (在'  + serializeText(hazardText.concat(eotText)) + '后)' : '';
     var i;
     for (i = 2; i <= 4; i++) {
         c = getKOChance(damage, multihit, defender.curHP - hazards, eot, i, defender.maxHP, toxicCounter, hasSitrus, hasFigy, gluttony);
         if (c === 1) {
-            return 'guaranteed ' + i + 'HKO' + afterText;
+            return '确定 ' + i + '次攻击击杀' + afterText;
         } else if (c > 0) {
             var pct = Math.round(c * 1000) / 10;
-            var chance = pct ? qualifier + pct + '%' : 'Miniscule';
-            return chance + ' chance to ' + i + 'HKO' + afterText;
+            var chance = pct ? qualifier + pct + '%' : '微小';
+            return chance + '几率' + i + '次攻击击杀' + afterText;
         }
     }
 
     for (i = 5; i <= 9; i++) {
         if (predictTotal(damage[0], eot, i, toxicCounter, defender.curHP - hazards, defender.maxHP, hasSitrus, hasFigy, gluttony) >= defender.curHP - hazards) {
-            return 'guaranteed ' + i + 'HKO' + afterText;
+            return '确定 ' + i + '次攻击击杀' + afterText;
         } else if (predictTotal(damage[damage.length-1], eot, i, toxicCounter, defender.curHP - hazards, defender.maxHP, hasSitrus, hasFigy, gluttony) >= defender.curHP - hazards) {
-            return 'possible ' + i + 'HKO' + afterText;
+            return '可能 ' + i + '次攻击击杀' + afterText;
         }
     }
 
-    return 'possibly the worst move ever';
+    return '没法更差了';
 }
 
 function getKOChance(damage, multihit, hp, eot, hits, maxHP, toxicCounter, hasSitrus, hasFigy, gluttony) {
@@ -353,12 +353,12 @@ function serializeText(arr) {
     } else if (arr.length === 1) {
         return arr[0];
     } else if (arr.length === 2) {
-        return arr[0] + " and " + arr[1];
+        return arr[0] + "和" + arr[1];
     } else {
         var text = '';
         for (var i = 0; i < arr.length-1; i++) {
             text += arr[i] + ', ';
         }
-        return text + 'and ' + arr[arr.length-1];
+        return text + '和' + arr[arr.length-1];
     }
 }
