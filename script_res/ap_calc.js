@@ -542,7 +542,7 @@ function calculate() {
         if(p1.moves[i].isMLG){
             result.koChanceText = "<a href = 'https://www.youtube.com/watch?v=iD92h-M474g'>it's a one-hit KO!</a>"; //dank memes
         }
-        $(resultLocations[0][i].move + " + label").text(p1.moves[i].name.replace("Hidden Power", "HP"));
+        $(resultLocations[0][i].move + " + label").text(translate_move(p1.moves[i].name.replace("Hidden Power", "HP")));
         $(resultLocations[0][i].damage).text(minPercent + " - " + maxPercent + "%");
         if (maxPercent > highestMaxPercent) {
             highestMaxPercent = maxPercent;
@@ -555,12 +555,12 @@ function calculate() {
         minPercent = Math.floor(minDamage * 1000 / p1.maxHP) / 10;
         maxPercent = Math.floor(maxDamage * 1000 / p1.maxHP) / 10;
         result.damageText = minDamage + "-" + maxDamage + " (" + minPercent + " - " + maxPercent + "%)";
-          result.koChanceText = p2.moves[i].bp === 0 ? '<a href="https://www.youtube.com/watch?v=7u6kMjWt1Rk&feature=youtu.be">you wanna dance with me?!</a>'
+          result.koChanceText = p2.moves[i].bp === 0 ? '<a href="https://bangumi.bilibili.com/anime/5761/play#97555">皮卡丘！加油！(避雷针？不存在的)</a>'
                 : getKOChanceText(result.damage, p2.moves[i], p1, field.getSide(0), p2.ability === 'Bad Dreams');
         if(p2.moves[i].isMLG){
             result.koChanceText = "<a href = 'https://www.youtube.com/watch?v=iD92h-M474g'>it's a one-hit KO!</a>";
         }
-        $(resultLocations[1][i].move + " + label").text(p2.moves[i].name.replace("Hidden Power", "HP"));
+        $(resultLocations[1][i].move + " + label").text(translate_move(p2.moves[i].name.replace("Hidden Power", "HP")));
         $(resultLocations[1][i].damage).text(minPercent + " - " + maxPercent + "%");
         if (maxPercent > highestMaxPercent) {
             highestMaxPercent = maxPercent;
@@ -848,14 +848,14 @@ $(".gen").change(function () {
     clearField();
     $(".gen-specific.g" + gen).show();
     $(".gen-specific").not(".g" + gen).hide();
-    var typeOptions = getSelectOptions(Object.keys(typeChart));
+    var typeOptions = getSelectOptions(Object.keys(typeChart), undefined, undefined, translate_type);
     $("select.type1, select.move-type").find("option").remove().end().append(typeOptions);
     $("select.type2").find("option").remove().end().append("<option value=\"\">(none)</option>" + typeOptions);
-    var moveOptions = getSelectOptions(Object.keys(moves), true);
+    var moveOptions = getSelectOptions(Object.keys(moves), true, undefined, translate_move);
     $("select.move-selector").find("option").remove().end().append(moveOptions);
-    var abilityOptions = getSelectOptions(abilities, true);
+    var abilityOptions = getSelectOptions(abilities, true, undefined, translate_ability);
     $("select.ability").find("option").remove().end().append("<option value=\"\">(other)</option>" + abilityOptions);
-    var itemOptions = getSelectOptions(items, true);
+    var itemOptions = getSelectOptions(items, true, undefined, translate_item);
     $("select.item").find("option").remove().end().append("<option value=\"\">(none)</option>" + itemOptions);
 
     $(".set-selector").val(getSetOptions()[gen > 3 ? 1 : gen === 1 ? 5 : 3].id);
@@ -894,7 +894,7 @@ function getSetOptions() {
             pokeNames.splice(index, 1);
         }
     }
-    pokeNames.sort();
+    pokeNames.sort((a, b) => translate_pokemon(a).localeCompare(translate_pokemon(b)));
     index = pokeNames.length;
     while(index--){ //forcing alolan forms to show first
         if(pokeNames[index].includes("-Alola")){
@@ -935,9 +935,10 @@ function getSetOptions() {
     return setOptions;
 }
 
-function getSelectOptions(arr, sort, defaultIdx) {
+function getSelectOptions(arr, sort, defaultIdx, transFunc) {
+    transFunc = transFunc == null ? function (x) { return x; } : transFunc;
     if (sort) {
-        arr.sort();
+        arr.sort((a, b) => transFunc(a).localeCompare(transFunc(b)));
     }
     var r = '';
     // Zero is of course falsy too, but this is mostly to coerce undefined.
@@ -946,9 +947,9 @@ function getSelectOptions(arr, sort, defaultIdx) {
     }
     for (var i = 0; i < arr.length; i++) {
         if (i === defaultIdx) {
-            r += '<option value="' + arr[i] + '" selected="selected">' + arr[i] + '</option>';
+            r += '<option value="' + arr[i] + '" selected="selected">' + transFunc(arr[i]) + '</option>';
         } else {
-            r += '<option value="' + arr[i] + '">' + arr[i] + '</option>';
+            r += '<option value="' + arr[i] + '">' + transFunc(arr[i]) + '</option>';
         }
     }
     return r;

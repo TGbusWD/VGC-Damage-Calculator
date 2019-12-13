@@ -817,9 +817,13 @@ function buildDescription(description) {
     return output;
 }
 
-function appendIfSet(str, toAppend) {
+function appendIfSet(str, toAppend, transFunc) {
     if (toAppend) {
-        return str + toAppend + " ";
+        if (transFunc) {
+            return str + transFunc(toAppend) + " ";
+        } else {
+            return str + toAppend + " ";
+        }
     }
     return str;
 }
