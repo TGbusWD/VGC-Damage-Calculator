@@ -927,9 +927,9 @@ function getSetOptions() {
         }
         setOptions.push({
             pokemon: pokeName,
-            set: "Blank Set",
-            text: translate_pokemon(pokeName) + " (Blank Set)",
-            id: pokeName + " (Blank Set)"
+            set: "空白配置",
+            text: translate_pokemon(pokeName) + " (空白配置)",
+            id: pokeName + " (空白配置)"
         });
     }
     return setOptions;
@@ -970,7 +970,7 @@ $(document).ready(function() {
             var results = [];
             for (var i = 0; i < setOptions.length; i++) {
                 var pokeName = setOptions[i].pokemon.toUpperCase();
-                if (!query.term || pokeName.indexOf(query.term.toUpperCase()) === 0) {
+                if (!query.term || pokeName.indexOf(query.term.toUpperCase()) === 0 || match_langs_pokemon(pokemonname_noforme(setOptions[i].pokemon), query.term.toUpperCase())) {
                     results.push(setOptions[i]);
                 }
             }
