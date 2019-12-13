@@ -3022,9 +3022,9 @@ var MOVES_SM = $.extend(true, {}, MOVES_XY, {
         zp: 175,
         isSpread: true
     },
-    'Light Of Ruin':{
-        zp: 200
-    },
+    // 'Light Of Ruin':{
+    //     zp: 200
+    // },
     'Origin Pulse':{
         zp: 185
     },
